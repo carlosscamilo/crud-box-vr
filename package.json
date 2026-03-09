@@ -1,0 +1,11 @@
+{
+  "name": "projeto-ra-rv",
+  "version": "1.0.0",
+  "description": "CRUD em Realidade Virtual com A-Frame e JSON Server",
+  "scripts": {
+    "server": "json-server --watch db.json --port 3000"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
+  }
+}

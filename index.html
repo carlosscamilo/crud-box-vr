@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="app.js" defer></script>
+    <style>
+      #color-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 9999;
+        text-align: center;
+        font-family: Arial, sans-serif;
+      }
+      #color-modal h3 {
+        margin-top: 0;
+        color: #333;
+      }
+      #color-picker {
+        width: 100px;
+        height: 50px;
+        border: none;
+        cursor: pointer;
+        margin: 10px 0;
+      }
+      .modal-btn {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      #confirm-color {
+        background: #0d6efd;
+        color: white;
+      }
+      #cancel-color {
+        background: #dc3545;
+        color: white;
+      }
+      #delete-item {
+        background: #6c757d;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Modal para alterar cor -->
+    <div id="color-modal">
+      <h3>Editar Cubo</h3>
+      <input type="color" id="color-picker" value="#ff0000">
+      <br>
+      <button class="modal-btn" id="confirm-color">Salvar</button>
+      <button class="modal-btn" id="delete-item">Excluir</button>
+      <button class="modal-btn" id="cancel-color">Cancelar</button>
+    </div>
+    <a-scene>
+      <a-sky color="#87CEEB"></a-sky>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="20" height="20" color="#228B22"></a-plane>
+
+      <!-- Árvores da floresta -->
+      <a-entity position="-3 0 -6">
+        <a-cylinder color="#8B4513" height="1.5" radius="0.2" position="0 0.75 0"></a-cylinder>
+        <a-cone color="#006400" height="2" radius-bottom="1" radius-top="0" position="0 2.5 0"></a-cone>
+      </a-entity>
+      <a-entity position="3 0 -7">
+        <a-cylinder color="#8B4513" height="2" radius="0.25" position="0 1 0"></a-cylinder>
+        <a-cone color="#228B22" height="2.5" radius-bottom="1.2" radius-top="0" position="0 3.25 0"></a-cone>
+      </a-entity>
+      <a-entity position="0 0 -8">
+        <a-cylinder color="#8B4513" height="1.8" radius="0.22" position="0 0.9 0"></a-cylinder>
+        <a-cone color="#006400" height="2.2" radius-bottom="1.1" radius-top="0" position="0 3 0"></a-cone>
+      </a-entity>
+      <a-entity position="-5 0 -5">
+        <a-cylinder color="#8B4513" height="1.2" radius="0.18" position="0 0.6 0"></a-cylinder>
+        <a-cone color="#228B22" height="1.8" radius-bottom="0.9" radius-top="0" position="0 2.1 0"></a-cone>
+      </a-entity>
+      <a-entity position="5 0 -5">
+        <a-cylinder color="#8B4513" height="1.6" radius="0.2" position="0 0.8 0"></a-cylinder>
+        <a-cone color="#006400" height="2" radius-bottom="1" radius-top="0" position="0 2.6 0"></a-cone>
+      </a-entity>
+
+      <a-entity camera look-controls position="0 1.6 0">
+        <a-cursor id="cursor" animation__click="property: scale; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; startEvents: click"></a-cursor>
+      </a-entity>
+
+      <a-entity id="inventory-container"></a-entity>
+
+      <!-- Botão Adicionar (Azul) -->
+      <a-entity id="add-button" position="-2 1.5 -3">
+        <a-cylinder color="#0d6efd" height="0.1" radius="0.35" rotation="90 0 0" 
+          material="shader: flat"></a-cylinder>
+        <a-cylinder color="#0a58ca" height="0.05" radius="0.35" rotation="90 0 0" position="0 0 -0.05"
+          material="shader: flat"></a-cylinder>
+        <a-text value="+" align="center" position="0 0 0.06" scale="2.5 2.5 2.5" color="white"></a-text>
+      </a-entity>
+
+      <!-- Botão Remover (Vermelho) -->
+      <a-entity id="remove-button" position="-1 1.5 -3">
+        <a-cylinder color="#dc3545" height="0.1" radius="0.35" rotation="90 0 0" 
+          material="shader: flat"></a-cylinder>
+        <a-cylinder color="#b02a37" height="0.05" radius="0.35" rotation="90 0 0" position="0 0 -0.05"
+          material="shader: flat"></a-cylinder>
+        <a-text value="-" align="center" position="0 0 0.06" scale="2.5 2.5 2.5" color="white"></a-text>
+      </a-entity>
+
+      <!-- Botão Remover Todos (Cinza) -->
+      <a-entity id="remove-all-button" position="0 1.5 -3">
+        <a-cylinder color="#6c757d" height="0.1" radius="0.35" rotation="90 0 0" 
+          material="shader: flat"></a-cylinder>
+        <a-cylinder color="#565e64" height="0.05" radius="0.35" rotation="90 0 0" position="0 0 -0.05"
+          material="shader: flat"></a-cylinder>
+        <a-text value="X" align="center" position="0 0 0.06" scale="1.5 1.5 1.5" color="white"></a-text>
+      </a-entity>
+
+      <!-- Botão Atualizar (Laranja) -->
+      <a-entity id="update-button" position="1 1.5 -3">
+        <a-cylinder color="#fd7e14" height="0.1" radius="0.35" rotation="90 0 0"
+          material="shader: flat"></a-cylinder>
+        <a-cylinder color="#ca6510" height="0.05" radius="0.35" rotation="90 0 0" position="0 0 -0.05"
+          material="shader: flat"></a-cylinder>
+        <a-plane id="update-icon-plane" width="0.45" height="0.45" position="0 0 0.07"
+          material="transparent: true; alphaTest: 0.5; color: white"></a-plane>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
