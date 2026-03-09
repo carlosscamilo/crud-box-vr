@@ -1,3 +1,29 @@
 {
-  "inventory": []
+  "inventory": [
+    {
+      "color": "#029b01",
+      "size": 1,
+      "id": 1
+    },
+    {
+      "color": "#7df478",
+      "size": 1,
+      "id": 2
+    },
+    {
+      "color": "#080ab0",
+      "size": 1,
+      "id": 3
+    },
+    {
+      "color": "#605218",
+      "size": 1,
+      "id": 4
+    },
+    {
+      "color": "#ae828f",
+      "size": 1,
+      "id": 5
+    }
+  ]
 }

@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/inventory';
+const API_URL = '/inventory';
 let inventory = [];
 let selectedIndex = null;
 
@@ -104,12 +104,17 @@ function renderScene() {
         entity.setAttribute('position', `${index * 1.5 - 1} 0.5 -5`);
         entity.setAttribute('class', 'clickable');
 
-        // Destaque visual no cubo selecionado
+        // Cubo sem destaque emissivo
+        entity.setAttribute('color', item.color);
+
+        // Quadrado de seleção transparente ao redor do cubo selecionado
         if (index === selectedIndex) {
-            entity.setAttribute('material', `color: ${item.color}; emissive: #ffff00; emissiveIntensity: 0.6`);
-            entity.setAttribute('scale', '1.2 1.2 1.2');
-        } else {
-            entity.setAttribute('color', item.color);
+            const outline = document.createElement('a-box');
+            outline.setAttribute('position', `${index * 1.5 - 1} 0.5 -5`);
+            outline.setAttribute('scale', '1.12 1.12 1.12');
+            outline.setAttribute('material', 'color: white; opacity: 0.25; transparent: true; wireframe: true; wireframe-linewidth: 3; shader: flat');
+            outline.setAttribute('class', 'non-clickable');
+            container.appendChild(outline);
         }
 
         // Clique no cubo apenas seleciona (não abre modal)
