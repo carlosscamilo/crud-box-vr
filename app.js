@@ -78,9 +78,20 @@ async function loadInventory() {
         const response = await fetch(API_URL);
         inventory = await response.json();
         renderScene();
+        setupGazeIndicator();
     } catch (error) {
         console.error('Erro ao carregar inventário. JSON Server está rodando?', error);
     }
+}
+
+// Exibe o indicador "Olhando..." ao fazer gaze em qualquer elemento clicável
+function setupGazeIndicator() {
+    const indicator = document.querySelector('#gaze-indicator');
+    document.querySelectorAll('[id$="-button"], .clickable').forEach(el => {
+        el.addEventListener('fusing', () => indicator.classList.add('visible'));
+        el.addEventListener('mouseleave', () => indicator.classList.remove('visible'));
+        el.addEventListener('click', () => indicator.classList.remove('visible'));
+    });
 }
 
 // GET - Renderizar todos os itens na cena 3D
@@ -105,6 +116,7 @@ function renderScene() {
         entity.addEventListener('click', () => {
             selectedIndex = index;
             renderScene();
+            setupGazeIndicator();
         });
 
         container.appendChild(entity);
@@ -157,10 +169,22 @@ document.querySelector('#delete-item').addEventListener('click', () => {
 // Cancelar
 document.querySelector('#cancel-color').addEventListener('click', closeColorModal);
 
-// PUT - Abrir modal ao clicar no botão de atualização virtual
-document.querySelector('#update-button').addEventListener('click', () => {
+// PUT - Alterar cor aleatória do cubo selecionado
+document.querySelector('#update-button').addEventListener('click', async () => {
     if (selectedIndex !== null) {
-        openColorModal(selectedIndex);
+        const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        const item = inventory[selectedIndex];
+        try {
+            const response = await fetch(`${API_URL}/${item.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...item, color: randomColor })
+            });
+            inventory[selectedIndex] = await response.json();
+            renderScene();
+        } catch (error) {
+            console.error('Erro ao atualizar cor:', error);
+        }
     }
 });
 

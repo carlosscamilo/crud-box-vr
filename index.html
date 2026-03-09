@@ -45,13 +45,31 @@
         background: #dc3545;
         color: white;
       }
-      #delete-item {
-        background: #6c757d;
+      #gaze-indicator {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.6);
         color: white;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        z-index: 9998;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      #gaze-indicator.visible {
+        opacity: 1;
       }
     </style>
   </head>
   <body>
+    <!-- Indicador de gaze -->
+    <div id="gaze-indicator">👁️ Olhando...</div>
+
     <!-- Modal para alterar cor -->
     <div id="color-modal">
       <h3>Editar Cubo</h3>
@@ -88,7 +106,18 @@
       </a-entity>
 
       <a-entity camera look-controls position="0 1.6 0">
-        <a-cursor id="cursor" animation__click="property: scale; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; startEvents: click"></a-cursor>
+        <!-- Cursor com gaze: olhar por 3 segundos = click -->
+        <a-cursor id="cursor"
+          fuse="true"
+          fuse-timeout="1500"
+          color="white"
+          opacity="0.9"
+          radius-inner="0.01"
+          radius-outer="0.015"
+          animation__fusing="property: scale; from: 1 1 1; to: 0.5 0.5 0.5; dur: 1500; startEvents: fusing; easing: easeInQuad"
+          animation__unfuse="property: scale; from: 0.5 0.5 0.5; to: 1 1 1; dur: 200; startEvents: mouseleave"
+          animation__click="property: scale; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; startEvents: click">
+        </a-cursor>
       </a-entity>
 
       <a-entity id="inventory-container"></a-entity>
